@@ -97,7 +97,14 @@ theorem impl_as_contrapositive :
 
 theorem impl_as_contrapositive_converse :
     (¬ Q → ¬ P) → (P → Q)  := by
-  sorry
+
+  intro nqinp p
+  by_cases qnq : Q
+
+  exact qnq
+
+  have boom : False := (nqinp qnq) p
+  contradiction
 
 theorem contrapositive_law :
     (P → Q) ↔ (¬ Q → ¬ P)  := by
