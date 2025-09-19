@@ -178,7 +178,11 @@ theorem disj_as_negconj :
 
 theorem conj_as_negdisj :
     P ∧ Q → ¬ (¬ P ∨ ¬ Q)  := by
-  sorry
+
+  intro paq nponq
+  rcases nponq with (np|nq)
+  apply np paq.left
+  apply nq paq.right
 
 
 ------------------------------------------------
