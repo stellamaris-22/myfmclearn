@@ -26,7 +26,12 @@ theorem doubleneg_elim :
 
 theorem doubleneg_law :
     ¬ ¬ P ↔ P  := by
-  sorry
+
+  constructor
+  exact doubleneg_elim P
+  exact doubleneg_intro P
+
+
 
 
 ------------------------------------------------
