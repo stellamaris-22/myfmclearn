@@ -170,7 +170,11 @@ theorem impl_linear :
 
 theorem disj_as_negconj :
     P ∨ Q → ¬ (¬ P ∧ ¬ Q)  := by
-  sorry
+
+  intro poq npanq
+  rcases poq with ((p|q))
+  apply npanq.left p
+  apply npanq.right q
 
 theorem conj_as_negdisj :
     P ∧ Q → ¬ (¬ P ∨ ¬ Q)  := by
