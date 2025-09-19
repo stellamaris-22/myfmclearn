@@ -241,7 +241,14 @@ theorem demorgan_conj :
 
 theorem demorgan_conj_converse :
     (¬ Q ∨ ¬ P) → ¬ (P ∧ Q)  := by
-  sorry
+
+  intro nqonp paq
+  rcases nqonp with (nq|np)
+
+  apply nq paq.right
+
+  apply np paq.left
+
 
 theorem demorgan_conj_law :
     ¬ (P ∧ Q) ↔ (¬ Q ∨ ¬ P)  := by
