@@ -91,7 +91,9 @@ theorem disj_as_impl :
 
 theorem impl_as_contrapositive :
     (P → Q) → (¬ Q → ¬ P)  := by
-  sorry
+
+  intro piq nq p
+  apply nq (piq p)
 
 theorem impl_as_contrapositive_converse :
     (¬ Q → ¬ P) → (P → Q)  := by
