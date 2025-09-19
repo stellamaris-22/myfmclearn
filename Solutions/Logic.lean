@@ -120,7 +120,15 @@ theorem contrapositive_law :
 
 theorem lem_irrefutable :
     ¬ ¬ (P ∨ ¬ P)  := by
-  sorry
+  intro n_ponp
+  have ponp : (P ∨ ¬ P) := by
+    right
+    intro p
+    have ponp : (P ∨ ¬ P) := by
+      left
+      exact p
+    apply n_ponp ponp
+  apply n_ponp ponp
 
 
 ------------------------------------------------
