@@ -210,7 +210,12 @@ theorem demorgan_disj :
 
 theorem demorgan_disj_converse :
     (¬ P ∧ ¬ Q) → ¬ (P ∨ Q)  := by
-  sorry
+
+  intro npanq poq
+  rcases poq with (p|q)
+
+  apply npanq.left p
+  apply npanq.right q
 
 theorem demorgan_conj :
     ¬ (P ∧ Q) → (¬ Q ∨ ¬ P)  := by
