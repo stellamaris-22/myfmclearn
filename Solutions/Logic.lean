@@ -76,7 +76,13 @@ theorem impl_as_disj_converse :
 
 theorem disj_as_impl :
     (P ∨ Q) → (¬ P → Q)  := by
-  sorry
+  intro poq np
+  rcases poq with (p|q)
+
+  have boom :False := np p
+  contradiction
+
+  exact q
 
 
 ------------------------------------------------
