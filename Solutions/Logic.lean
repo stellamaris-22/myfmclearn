@@ -151,7 +151,17 @@ theorem peirce_law_weak :
 
 theorem impl_linear :
     (P → Q) ∨ (Q → P)  := by
-  sorry
+
+  by_cases pnp : P
+
+  right
+  intro q
+  exact pnp
+
+  left
+  intro p
+  have boom : False := pnp p
+  contradiction
 
 
 ------------------------------------------------
