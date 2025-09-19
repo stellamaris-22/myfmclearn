@@ -65,7 +65,14 @@ theorem conj_comm :
 
 theorem impl_as_disj_converse :
     (¬ P ∨ Q) → (P → Q)  := by
-  sorry
+  intro npoq p
+  rcases npoq with (np|q)
+
+  have boom : False := np p
+  contradiction
+
+  exact q
+
 
 theorem disj_as_impl :
     (P ∨ Q) → (¬ P → Q)  := by
