@@ -52,7 +52,11 @@ theorem disj_comm :
 
 theorem conj_comm :
     (P ∧ Q) → (Q ∧ P)  := by
-  sorry
+  intro paq
+  apply And.intro
+  exact paq.right
+  exact paq.left
+
 
 
 ------------------------------------------------
