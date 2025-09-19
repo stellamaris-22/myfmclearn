@@ -252,11 +252,16 @@ theorem demorgan_conj_converse :
 
 theorem demorgan_conj_law :
     ¬ (P ∧ Q) ↔ (¬ Q ∨ ¬ P)  := by
-  sorry
+
+  constructor
+  exact demorgan_conj P Q
+  exact demorgan_conj_converse P Q
 
 theorem demorgan_disj_law :
     ¬ (P ∨ Q) ↔ (¬ P ∧ ¬ Q)  := by
-  sorry
+  constructor
+  exact demorgan_disj P Q
+  exact demorgan_disj_converse P Q
 
 
 ------------------------------------------------
