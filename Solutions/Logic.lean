@@ -137,7 +137,12 @@ theorem lem_irrefutable :
 
 theorem peirce_law_weak :
     ((P → Q) → P) → ¬ ¬ P  := by
-  sorry
+  intro piq_ip np
+  have piq : P → Q := by
+    intro p
+    have boom: False := np p
+    contradiction
+  apply np (piq_ip piq)
 
 
 ------------------------------------------------
