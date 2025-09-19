@@ -191,7 +191,22 @@ theorem conj_as_negdisj :
 
 theorem demorgan_disj :
     ¬ (P ∨ Q) → (¬ P ∧ ¬ Q)  := by
-  sorry
+
+
+  intro n_poq
+  apply And.intro
+
+  intro p
+  have poq : P ∨ Q := by
+    left
+    exact p
+  apply n_poq poq
+
+  intro q
+  have poq : P ∨ Q := by
+    right
+    exact q
+  apply n_poq poq
 
 theorem demorgan_disj_converse :
     (¬ P ∧ ¬ Q) → ¬ (P ∨ Q)  := by
