@@ -270,20 +270,73 @@ theorem demorgan_disj_law :
 
 theorem distr_conj_disj :
     P ∧ (Q ∨ R) → (P ∧ Q) ∨ (P ∧ R)  := by
-  sorry
+
+    intro pa_qor
+    rcases pa_qor.right with (q|r)
+
+    left
+    constructor
+    exact pa_qor.left
+    exact q
+
+    right
+    constructor
+    exact pa_qor.left
+    exact r
+
 
 theorem distr_conj_disj_converse :
     (P ∧ Q) ∨ (P ∧ R) → P ∧ (Q ∨ R)  := by
-  sorry
+
+  intro paq_o_par
+  rcases paq_o_par with (paq|par)
+
+  constructor
+  exact paq.left
+
+  left
+  exact paq.right
+
+  constructor
+  exact par.left
+  right
+  exact par.right
+
 
 theorem distr_disj_conj :
     P ∨ (Q ∧ R) → (P ∨ Q) ∧ (P ∨ R)  := by
-  sorry
+
+  intro po_qar
+  rcases po_qar with (p|qar)
+  constructor
+  left
+  exact p
+  left
+  exact p
+  constructor
+  right
+  exact qar.left
+  right
+  exact qar.right
 
 theorem distr_disj_conj_converse :
     (P ∨ Q) ∧ (P ∨ R) → P ∨ (Q ∧ R)  := by
-  sorry
 
+  intro poq_a_por
+  rcases poq_a_por.left with (p|q)
+
+  left
+  exact p
+
+  rcases poq_a_por.right with (p|r)
+
+  left
+  exact p
+
+  right
+  constructor
+  exact q
+  exact r
 
 ------------------------------------------------
 -- Currying
@@ -291,11 +344,20 @@ theorem distr_disj_conj_converse :
 
 theorem curry_prop :
     ((P ∧ Q) → R) → (P → (Q → R))  := by
-  sorry
+
+  intro paqir p q
+  have pq : P ∧ Q := by
+    constructor
+    exact p
+    exact q
+  apply paqir pq
 
 theorem uncurry_prop :
     (P → (Q → R)) → ((P ∧ Q) → R)  := by
-  sorry
+
+  intro piqir paq
+  have qir : Q → R := piqir paq.left
+  apply qir paq.right
 
 
 ------------------------------------------------
@@ -304,7 +366,8 @@ theorem uncurry_prop :
 
 theorem impl_refl :
     P → P  := by
-  sorry
+  intro h
+  exact h
 
 
 ------------------------------------------------
@@ -313,19 +376,25 @@ theorem impl_refl :
 
 theorem weaken_disj_right :
     P → (P ∨ Q)  := by
-  sorry
+  intro p
+  left
+  exact p
 
 theorem weaken_disj_left :
     Q → (P ∨ Q)  := by
-  sorry
+  intro q
+  right
+  exact q
 
 theorem weaken_conj_right :
     (P ∧ Q) → P  := by
-  sorry
+  intro paq
+  exact paq.left
 
 theorem weaken_conj_left :
     (P ∧ Q) → Q  := by
-  sorry
+  intro paq
+  exact paq.right
 
 
 ------------------------------------------------
@@ -334,12 +403,24 @@ theorem weaken_conj_left :
 
 theorem disj_idem :
     (P ∨ P) ↔ P  := by
-  sorry
+  constructor
+  intro pop
+  rcases pop with p|p
+  exact p
+  exact p
+  intro p
+  left
+  exact p
 
 theorem conj_idem :
     (P ∧ P) ↔ P := by
-  sorry
-
+  constructor
+  intro pap
+  exact pap.left
+  intro p
+  constructor
+  exact p
+  exact p
 
 ------------------------------------------------
 -- Bottom, Top
@@ -347,11 +428,13 @@ theorem conj_idem :
 
 theorem false_bottom :
     False → P := by
-  sorry
+  intro boom
+  contradiction
 
 theorem true_top :
     P → True  := by
-  sorry
+  intro p
+  trivial
 
 
 end propositional
@@ -370,28 +453,59 @@ variable (P Q : U → Prop)
 
 theorem demorgan_exists :
     ¬ (∃ x, P x) → (∀ x, ¬ P x)  := by
-  sorry
+  intro nep
+  intro a pa
+  have ep : (∃ x, P x) := Exists.intro a pa
+  apply nep ep
+
+
+
 
 theorem demorgan_exists_converse :
     (∀ x, ¬ P x) → ¬ (∃ x, P x)  := by
-  sorry
+
+  intro anp ep
+  obtain ⟨a, ha⟩ := ep
+  apply anp a ha
+
+
 
 theorem demorgan_forall :
     ¬ (∀ x, P x) → (∃ x, ¬ P x)  := by
-  sorry
+
+  intro nap
+  by_cases enenp : ∃ (x : U), ¬P x
+  exact enenp
+
+  have ap : (∀ x, P x) := by -- Era p só app demorgan_exists com a Prop sendo ¬ P... mas n consegui
+    intro a
+    by_cases panpa : P a
+    exact panpa
+    have enp : (∃ x, ¬P x) := Exists.intro a panpa
+    have boom : False := enenp enp
+    contradiction
+
+  have boom : False := nap ap
+  contradiction
 
 theorem demorgan_forall_converse :
     (∃ x, ¬ P x) → ¬ (∀ x, P x)  := by
-  sorry
+  intro enp ap
+  obtain ⟨a, ha⟩ := enp
+  apply ha (ap a)
+
 
 theorem demorgan_forall_law :
     ¬ (∀ x, P x) ↔ (∃ x, ¬ P x)  := by
-  sorry
+  constructor
+  exact demorgan_forall U P
+  exact demorgan_forall_converse U P
 
 theorem demorgan_exists_law :
     ¬ (∃ x, P x) ↔ (∀ x, ¬ P x)  := by
-  sorry
-
+  constructor
+  exact demorgan_exists U P
+  exact demorgan_exists_converse U P
 
 ------------------------------------------------
 -- Interdefinability of ∃,∀
@@ -399,27 +513,62 @@ theorem demorgan_exists_law :
 
 theorem exists_as_neg_forall :
     (∃ x, P x) → ¬ (∀ x, ¬ P x)  := by
-  sorry
+
+
+  intro ep anp
+  obtain ⟨a, pa⟩ := ep
+  apply anp a pa
 
 theorem forall_as_neg_exists :
     (∀ x, P x) → ¬ (∃ x, ¬ P x)  := by
-  sorry
+
+  intro ap enp
+  obtain ⟨a, npa⟩ := enp
+  apply npa (ap a)
+
+
 
 theorem forall_as_neg_exists_converse :
     ¬ (∃ x, ¬ P x) → (∀ x, P x)  := by
-  sorry
+
+  intro nenp a
+  by_cases panpa : P a
+  exact panpa
+  have enp : (∃ x, ¬ P x) := Exists.intro a panpa
+  have boom: False := nenp enp
+  contradiction
+
 
 theorem exists_as_neg_forall_converse :
     ¬ (∀ x, ¬ P x) → (∃ x, P x)  := by
-  sorry
+  intro nanp
+  by_cases enep : ∃ (x : U), P x
+  exact enep
+
+  have anp : (∀ x, ¬P x) := by
+    intro a
+    by_cases panpa : P a
+    have enp : (∃ x, P x) := Exists.intro a panpa
+    have boom : False := enep enp
+    contradiction
+    exact panpa
+
+  have boom : False := nanp anp
+  contradiction
+
 
 theorem forall_as_neg_exists_law :
     (∀ x, P x) ↔ ¬ (∃ x, ¬ P x)  := by
-  sorry
+  constructor
+  exact forall_as_neg_exists U P
+  exact forall_as_neg_exists_converse U P
+
 
 theorem exists_as_neg_forall_law :
     (∃ x, P x) ↔ ¬ (∀ x, ¬ P x)  := by
-  sorry
+  constructor
+  exact exists_as_neg_forall U P
+  exact exists_as_neg_forall_converse U P
 
 
 ------------------------------------------------
@@ -428,27 +577,70 @@ theorem exists_as_neg_forall_law :
 
 theorem exists_conj_as_conj_exists :
     (∃ x, P x ∧ Q x) → (∃ x, P x) ∧ (∃ x, Q x)  := by
-  sorry
+  intro epaq
+  obtain ⟨a, paaqa⟩ := epaq
+  constructor
+
+  apply Exists.intro a paaqa.left
+  apply Exists.intro a paaqa.right
 
 theorem exists_disj_as_disj_exists :
     (∃ x, P x ∨ Q x) → (∃ x, P x) ∨ (∃ x, Q x)  := by
-  sorry
+  intro epoq
+  obtain ⟨a, paoqa⟩ := epoq
+  rcases paoqa with pa|qa
+  left
+  apply Exists.intro a pa
+  right
+  apply Exists.intro a qa
 
 theorem exists_disj_as_disj_exists_converse :
     (∃ x, P x) ∨ (∃ x, Q x) → (∃ x, P x ∨ Q x)  := by
-  sorry
+  intro epoeq
+  rcases epoeq with ep|eq
+
+  obtain ⟨a, pa⟩ := ep
+  have paoqa : P a ∨ Q a := by
+    left
+    exact pa
+  apply Exists.intro a paoqa
+
+  obtain ⟨b, qb⟩ := eq
+  have pboqb : P b ∨ Q b := by
+    right
+    exact qb
+  apply Exists.intro b pboqb
+
 
 theorem forall_conj_as_conj_forall :
     (∀ x, P x ∧ Q x) → (∀ x, P x) ∧ (∀ x, Q x)  := by
-  sorry
+
+  intro apaq
+  constructor
+  intro a
+  have paaqa : P a ∧ Q a := apaq a
+  exact paaqa.left
+
+  intro b
+  have pbaqb : P b ∧ Q b := apaq b
+  exact pbaqb.right
 
 theorem forall_conj_as_conj_forall_converse :
     (∀ x, P x) ∧ (∀ x, Q x) → (∀ x, P x ∧ Q x)  := by
-  sorry
+  intro apaaq b
+  constructor
+  exact apaaq.left b
+  exact apaaq.right b
 
 theorem forall_disj_as_disj_forall_converse :
     (∀ x, P x) ∨ (∀ x, Q x) → (∀ x, P x ∨ Q x)  := by
-  sorry
+  intro apoaq b
+  rcases apoaq with ap|aq
+  left
+  exact ap b
+
+  right
+  exact aq b
 
 
 end predicate
@@ -469,7 +661,60 @@ variable (D : U → Prop)
 -- D x: «x drinks»
 theorem drinker :
     ∃ p, (D p → ∀ x, D x)  := by
+
+
+  by_cases endnend : ∃ p, ¬D p
+
+  obtain ⟨a, dna⟩ := endnend
+  apply Exists.intro a
+  intro da
+  have boom : False := dna da
+  contradiction
+
+  have ad : ∀ x, D x := by
+
+  -- forall_as_neg_exists_converse
+
+    intro b
+    by_cases dbndb : D b
+    exact dbndb
+    have enp : (∃ x, ¬ D x) := Exists.intro b dbndb
+    have boom: False := endnend enp
+    contradiction
+
+--i need to introduce a guy...
+  by_cases edned : ∃ x, D x
+
+  obtain ⟨c, dc⟩ := edned
+
+  apply Exists.intro c
+  intro dc2
+  exact ad
+
+  have and : ∀ x, ¬ D x := by
+    intro k dk
+    have ed : (∃ x, D x) := Exists.intro k dk
+    apply edned ed
+
+
+  /-
+  Maybe not provable cause i cant be sure there *is* a guy in the bar...?
+  But wouldnt it mean by vacuity everyone drinks, satisfying the implication?
+  But i also wont have a guy to point to...
+  goddammit.
+
+  if i could have *one* guy in U i could easily prove it, but i cant be sure
+  Id just apply al & and to the guy and boom
+
+  The empty bar really is a loophole
+
+  i love proof assistants.
+  -/
+
   sorry
+
+
+
 
 ------------------------------------------------
 --  Russell's paradox
@@ -483,8 +728,18 @@ variable (S : U → U → Prop)
 -- S x y: «x shaves y»
 theorem russell :
     ¬ ∃ b, ∀ x, (S b x ↔ ¬ S x x)  := by
-  sorry
+  intro easiffns
+  obtain ⟨a, asaiffns⟩ := easiffns
+  have saaiffnsaa : S a a ↔ ¬S a a := asaiffns a
+  by_cases saansaa : S a a
 
+  have nsaa : ¬ S a a := saaiffnsaa.mp saansaa
+  have boom : False := nsaa saansaa
+  exact boom
+
+  have saa : S a a := saaiffnsaa.mpr saansaa
+  have boom : False := saansaa saa
+  exact boom
 
 end bonus
 
